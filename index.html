@@ -97,7 +97,7 @@
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpkc2V2ZGJhanhiaWFoeXh5emp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjY0NDYyMDgsImV4cCI6MjA0MjAyMjIwOH0.Itv5k2QqB1dRorCp7r8Scs2XsEz4dLU65SJLs6VeYyU";
 
         // Inicializamos Supabase
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // Elementos del DOM
         const messageForm = document.getElementById('messageForm');
