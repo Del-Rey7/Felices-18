@@ -3,38 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Felicitaciones de Cumpleaños</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script> <!-- Importar Supabase -->
-    <script defer src="script.js"></script>
+    <title>Felicitaciones de Cumpleaños para Brillith</title>
+    
+    <!-- Importar Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    
+    <!-- Estilos integrados -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffe6f2;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #ff66b2;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+            margin-bottom: 20px;
+        }
+
+        input, textarea {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #ff66b2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #ff3385;
+        }
+
+        #messages {
+            width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+        }
+
+        .message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .message strong {
+            color: #ff66b2;
+        }
+    </style>
 </head>
 <body>
     <h1>Deja tu mensaje de felicitación para Brillith</h1>
     
+    <!-- Formulario para enviar mensajes -->
     <form id="messageForm">
         <input type="text" id="name" placeholder="Tu nombre" required>
         <textarea id="message" placeholder="Escribe tu mensaje" required></textarea>
         <button type="submit">Enviar Felicitación</button>
     </form>
     
-    <div id="messages"></div>
-</body>
-</html>
-
-    </style>
-</head>
-<body>
-    <h1>Feliz Cumpleaños, Brillith</h1>
-    <p>Deja tu mensaje de felicitación</p>
-    
-    <form id="messageForm">
-        <input type="text" id="name" placeholder="Tu nombre" required>
-        <textarea id="message" placeholder="Escribe tu mensaje" required></textarea>
-        <button type="submit">Enviar</button>
-    </form>
-
+    <!-- Mensajes -->
     <div id="messages"></div>
 
-    <script src="script.js"></script>
+    <!-- Script para manejar Supabase -->
+    <script>
+        // Conexión a Supabase
+        const SUPABASE_URL = "https://zdsevdbajxbiahyxyzjt.supabase.co/";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpkc2V2ZGJhanhiaWFoeXh5emp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjY0NDYyMDgsImV4cCI6MjA0MjAyMjIwOH0.Itv5k2QqB1dRorCp7r8Scs2XsEz4dLU65SJLs6VeYyU";
+
+        // Inicializamos Supabase
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Elementos del DOM
+        const messageForm = document.getElementById('messageForm');
+        const messagesDiv = document.getElementById('messages');
+
+        // Función para cargar los mensajes
+        async function loadMessages() {
+            const { data, error } = await supabase
+                .from('messages')
+                .select('*');
+            
+            if (error) {
+                console.error("Error al cargar los mensajes:", error);
+                return;
+            }
+
+            messagesDiv.innerHTML = ''; // Limpiar los mensajes previos
+
+            data.forEach(message => {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message');
+                messageDiv.innerHTML = `<strong>${message.name}</strong>: ${message.text}`;
+                messagesDiv.appendChild(messageDiv);
+            });
+        }
+
+        // Enviar un nuevo mensaje
+        messageForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const message = document.getElementById('message').value;
+
+            const { data, error } = await supabase
+                .from('messages')
+                .insert([{ name, text: message }]);
+
+            if (error) {
+                console.error("Error al enviar el mensaje:", error);
+                return;
+            }
+
+            loadMessages(); // Recargar los mensajes después de enviar
+            messageForm.reset(); // Limpiar el formulario
+        });
+
+        // Cargar los mensajes al cargar la página
+        loadMessages();
+    </script>
 </body>
 </html>
